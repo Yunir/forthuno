@@ -1,12 +1,12 @@
-all: itc
+all: forthuno
 
-itc: itc.o
-	ld -o itc itc.o
+forthuno: forthuno.o
+	ld -o forthuno forthuno.o
 
-itc.o: itc.asm
-	nasm -f elf64 -g -F dwarf itc.asm -o itc.o
+forthuno.o: forthuno.asm
+	nasm -f elf64 -g -F dwarf forthuno.asm -o forthuno.o
 
 clean:
-	rm -f itc *.o
+	rm -f forthuno *.o
 
-# debugging: gdb itc -f .gdbinit
+# debugging: gdb forthuno -f .gdbinit
