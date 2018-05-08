@@ -38,19 +38,15 @@ find_word:
     mov rax, rsi
     ret
 
-; code from address - jump pointer to execution_point place
-; rdi - command address
-; rax - address of xt_COMMAND
-cfa:
-	xor eax, eax
-  pop rdi
-	add rdi, link_size
+call_from_address:
+  xor eax, eax
+  add rdi, link_size
   push rdi
   call string_length        ; rax - length of string
   pop rdi
   add rax, 1                ; rax - length with null-terminator
   add rdi, rax
-	mov rax, rdi
+  mov rax, rdi
   ret
 
 ; The inner interpreter. These three lines
