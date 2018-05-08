@@ -5,25 +5,29 @@
 
 global _start
 
+section .data
+  last_word: dq link
+
+section .text
 _start:
   jmp init_impl
 
-interpreter_loop:
+run:
   dq docol_impl
-
-  dq xt_inbuf
-  dq xt_word                ; read the word
+interpreter_loop:
+  dq xt_buffer
+  dq xt_read                ; read the word
   branchif0 .exit           ; word read error or empty string
 
-  dq xt_inbuf
-  dq find
+  dq xt_buffer
+  dq xt_find
   branchif0 .number
 
-  dq cfa                   ; rax - execution address
-  dq ps
+  dq xt_cfa                 ; rax - execution address
+  dq xt_ps
 
   .number:
-    dq numlen
+    dq xt_parsei
     branchif0 warning
     branch interpreter_loop
 
@@ -31,5 +35,5 @@ interpreter_loop:
     dq xt_bye
 
 warning:
-  dq drop
-	dq warn
+  dq xt_drop
+	dq xt_warn

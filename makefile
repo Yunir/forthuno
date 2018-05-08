@@ -9,4 +9,10 @@ forthuno.o: forthuno.asm
 clean:
 	rm -f forthuno *.o
 
-# debugging: gdb forthuno -f .gdbinit
+rebuild: clean forthuno
+
+debug: forthuno
+	gdb forthuno -f .gdbinit
+
+# build and debug
+bd: rebuild debug

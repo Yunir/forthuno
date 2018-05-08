@@ -28,7 +28,7 @@
 	  db %1, 0
   section .text
 	 xt_ %+ %2:
-	  dq docol_impl             ; The `docol` address −− one level of indirection
+	  dq xt_docol             ; The `docol` address −− one level of indirection
 %endmacro
 
 %macro branchif0 1

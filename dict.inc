@@ -46,9 +46,10 @@ native 'parsei', parsei
 
 ; UTIL WORDS
 
-; (  -- addr )
+; ( user_word_addr -- dict_word_addr )
 ; Find word in dictionary
 native 'find', find
+  pop rdi                ; rdi - user's word
   call find_word
   push rax
   jmp next
@@ -126,7 +127,7 @@ native 'warn', warn
 native 'init', init
   mov rstack, rstack_start
   ; interpreter mode
-  mov pc, xt_interpreter    ; entry_point - other way to work with
+  mov pc, xt_run    ; entry_point - other way to work with
   jmp next
 
 
