@@ -14,5 +14,11 @@ rebuild: clean forthuno
 debug: forthuno
 	gdb forthuno -f .gdbinit
 
+run: forthuno
+	./forthuno
+
 # build and debug
-bd: rebuild debug
+bd: clean debug
+
+# build and run
+br: clean run
