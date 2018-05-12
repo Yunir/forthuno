@@ -21,7 +21,7 @@ native 'printi', printi
 
 ; ( arg2_addr arg1_addr -- answer )
 ; check strings to equality
-native 'equals', equals
+native 'compare', compare
   pop rdi
   pop rsi
   call string_equals
@@ -114,9 +114,9 @@ native 'wasbranch', wasbranch
 
 ; Pushes a value immediately following this XT
 native 'lit', lit
-    push qword [pc]
-    add pc, 8
-    jmp next
+  push qword [pc]
+  add pc, 8
+  jmp next
 
 
 ; COMPILE-ONLY WORDS
@@ -136,8 +136,8 @@ native 'branchifz', branchifz
 ; (  --  )
 ; Jump to a location
 native 'branch', branch
-    mov pc, [pc]
-    jmp next
+  mov pc, [pc]
+  jmp next
 
 ; Saves PC when the colon word starts
 native 'docol', docol
@@ -205,13 +205,6 @@ native 'pushmode', pushmode
 ; Drops the topmost element from the stack
 native 'drop', drop
   add rsp, 8
-  jmp next
-
-; ( b a -- [ b + a ] )
-native '+', plus
-  pop rax
-  add rax, [rsp]
-  mov [rsp], rax
   jmp next
 
 ; ( a -- a a )
@@ -370,11 +363,51 @@ native '@', fetch
 
 ; bitwise or
 ; ( y x -- y | x )
-native "or", or
+native 'or', or
   pop rax
   or [rsp], rax
   jmp next
 
+; ( x -- )
+; Add x to the word being defined
+native ',', comma
+  mov rax, [here]
+  pop qword [rax]
+  add qword [here], 8
+  jmp next
+
+; ( flags name --  )
+; Create an entry in the dictionary
+; name is the new name as a null-terminated string
+; only immediate flag is implemented ATM
+native 'create', create
+  ; link
+  mov rcx, [last_word]
+  mov rsi, [here]
+  mov [rsi], rcx
+  mov [last_word], rsi
+  add rsi, 8
+  mov byte [rsi], 0
+  inc rsi
+
+  ; name
+  pop rdi
+  push rsi
+  call string_copy
+  pop rsi
+  push rsi
+  mov rdi, rsi
+  call string_length
+  pop rsi
+  add rsi, rax
+  ; flags
+  inc rsi
+  pop rax
+  mov [rsi], al
+  inc rsi
+
+  mov [here], rsi
+  jmp next
 
 ; ( a -- [ a + a ] )
 colon 'double', double
@@ -386,3 +419,44 @@ colon '>', greater
   dq xt_swap
   dq xt_less
   dq exit
+
+; Read word from stdin and start defining it
+colon ':', colon
+  .restart:
+  dq xt_buffer
+  dq xt_read
+  branchif0 .restart
+  dq xt_lit, 0, xt_buffer, xt_create
+  dq xt_lit, 1
+  ;dq xt_state, xt_write
+  dq xt_lit, docol_impl, xt_comma
+  dq xt_exit
+
+colon ';', semicolon, 1
+  dq xt_lit, 0
+  ;dq xt_state
+  dq xt_write
+  dq xt_lit, xt_exit
+  dq xt_comma
+  dq xt_exit
+
+; Read word and place its address on stack
+; ( -- a )
+colon "'", tick, 1
+  dq xt_buffer
+  dq xt_read
+  dq xt_drop
+  dq xt_buffer
+  dq xt_find, xt_dup
+  branchif0 .no_such_word
+  dq xt_cfa
+  ;dq xt_state, xt_fetch
+  branchif0 .interpret
+  dq xt_lit, xt_lit
+  dq xt_comma
+  dq xt_comma
+  .interpret:
+    dq xt_exit
+    .no_such_word:
+      dq xt_warn
+      dq xt_exit
