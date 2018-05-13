@@ -1,7 +1,8 @@
 %define pc r15
 %define w r14
 %define rstack r13
-%define here r12          ; pointer to free block of forth memory
+%define stack r12
+%define here r11         ; pointer to free block of forth memory
 %define link 0
 
 %assign link_size 8

@@ -1,4 +1,22 @@
-; IO_LIB WORDS
+; (  -- buf_addr )
+; load the predefined buffer address
+native 'buffer', buffer
+  push qword input_buf
+  jmp next
+
+; ( buf_addr -- len )
+; read word to buffer
+native 'read', read
+  pop rdi
+  call read_word
+  push rdx
+  jmp next
+
+; ( a --  )
+; drop the topmost element from the stack
+native 'drop', drop
+  add rsp, 8
+  jmp next
 
 ; ( addr --  )
 ; print string
@@ -28,23 +46,12 @@ native 'compare', compare
   push rax
   jmp next
 
-; ( buf_addr -- len )
-; read word to buffer
-native 'read', read
-  pop rdi
-  call read_word
-  push rdx
-  jmp next
-
 ; (  -- num len )
 native 'parsei', parsei
   call parse_int          ; rax - number ; rdx - length of number
   push rax                ; save number to stack
   push rdx
   jmp next
-
-
-; UTIL WORDS
 
 ; ( user_word_addr -- dict_word_addr )
 ; Find word in dictionary
@@ -104,7 +111,6 @@ native 'savenum', savenum
   add  here, word_size
   jmp next
 
-
 ; (  -- answer )
 native 'wasbranch', wasbranch
   xor rdx, rdx
@@ -117,9 +123,6 @@ native 'lit', lit
   push qword [pc]
   add pc, 8
   jmp next
-
-
-; COMPILE-ONLY WORDS
 
 ; ( answer --  )
 ; Jump to a location if answer is 0
@@ -159,12 +162,6 @@ native 'bye', bye
   xor rdi, rdi
   syscall
 
-; (  -- buf_addr )
-; Loads the predefined buffer address
-native 'buffer', buffer
-  push qword input_buf
-  jmp next
-
 ; ( xt_addr --  )
 native 'initcmd', initcmd
   pop rax
@@ -182,29 +179,24 @@ native 'warn', warn
   mov  pc, xt_loop
   jmp next
 
-; Initializes registers
-native 'init', init
-  mov rstack, rstack_start
-  ; interpreter mode
-  mov pc, xt_run    ; entry_point - other way to work with
-  cmp qword[stack_start], 0
-  je  .init_stack
-  mov rsp, [stack_start]
+native 'comp_m', comp_m
+  mov  rdi, cmode_message
+  call print_string
+  call print_newline
+  mov  pc, xt_loop
   jmp next
-  .init_stack:
-  mov [stack_start], rsp
+
+native 'inte_m', inte_m
+  mov  rdi, imode_message
+  call print_string
+  call print_newline
+  mov  pc, xt_loop
   jmp next
 
 native 'pushmode', pushmode
-  push mode
-  jmp next
-
-; GENERAL WORDS
-
-; ( a --  )
-; Drops the topmost element from the stack
-native 'drop', drop
-  add rsp, 8
+  xor eax, eax
+  mov rax, [mode]
+  push rax
   jmp next
 
 ; ( a -- a a )
@@ -408,6 +400,15 @@ native 'create', create
 
   mov [here], rsi
   jmp next
+
+; Initializes registers
+native 'init', init
+  mov rstack, rstack_start
+  mov stack, stack_start
+  mov qword[mode], 0
+  mov pc, xt_run
+  jmp next
+
 
 ; ( a -- [ a + a ] )
 colon 'double', double

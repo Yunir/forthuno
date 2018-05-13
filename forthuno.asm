@@ -26,6 +26,7 @@ run:
     branchif0 .interpreter_mode
 
   .compiler_mode:
+    dq xt_comp_m
     dq xt_dup                 ; copy address
     branchif0 .compiler_number
 
@@ -64,6 +65,7 @@ run:
 
 
   .interpreter_mode:
+    dq xt_inte_m
     dq xt_dup
     branchif0 .interpreter_number
 

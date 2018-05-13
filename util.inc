@@ -3,13 +3,19 @@ section .data
   xt_loop: dq main_loop
   program_stub: dq 0
   warning_message: db "Warning: no such word", 0
-  mode: db 0               ; 0 - interpreter ; 1 - compiler
+  imode_message: db "Interpreter mode", 0
+  cmode_message: db "Compiler mode", 0
+  mode: dq 0               ; 0 - interpreter ; 1 - compiler
   was_branch: db 0
   mem: dq forth_mem
-  stack_start:
 
 
 section .bss
+
+  ; data stack - END   ;
+  resq 1023
+  stack_start: resq 1
+  ; data stack - START ;
 
   ; return stack - END   ;
   resq 1023
