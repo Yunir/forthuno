@@ -18,15 +18,19 @@
 |-|-|-|
 | buf | (  -- buf_addr ) | load the predefined buffer address |
 | read | ( addr -- len ) | read word to addr |
-| drop | ( a --  ) | drop the topmost element from the stack |
+| drop | ( a --  ) | drop last element from the stack |
 | prints | ( addr --  ) | print string |
 | printnl | (  --  ) | print new line |
-| printi | ( a --  ) | print integer number |
+| . | ( a --  ) | print integer number |
 | compare | ( addr2 addr1 -- ans ) | check strings to equality |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| dup | ( a -- a a ) | duplicate last element of stack |
+| + | ( b a -- [b+a] ) | put the result of sum to the stack |
+| - | ( b a -- [b-a] ) | put the result of subtraction to the stack |
+| * | ( b a -- [b*a] ) | put the result of multiplication to the stack |
+| / | ( b a -- [b/a] ) | put the result of division to the stack |
 |  |  |  |
 | To | Be | Continued... |
+
+###### Additional words not for general using
 
 ##### Colon words

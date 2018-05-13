@@ -32,7 +32,7 @@ native 'printnl', printnl
 
 ; ( a --  )
 ; print integer number
-native 'printi', printi
+native '.', dot
   pop rdi
   call print_int
   jmp next
@@ -44,6 +44,168 @@ native 'compare', compare
   pop rsi
   call string_equals
   push rax
+  jmp next
+
+; ( a -- a a )
+native 'dup', dup
+  push qword [rsp]
+  jmp next
+
+  ; ( b a -- [ b + a ] )
+  native '+', plus
+    pop rdx
+    pop rax
+    add rax, rdx
+    push rax
+    jmp next
+
+  ; ( b a -- [ b - a ] )
+  native '-', minus
+    pop rdx
+    pop rax
+    sub rax, rdx
+    push rax
+    jmp next
+
+  ; ( b a -- [ b * a ] )
+  native '*', mul
+    pop rdx
+    pop rax
+    imul rdx
+    push rax
+    jmp next
+
+  ; ( b a -- [ b / a ] )
+  native '/', div
+    pop rcx
+    pop rax
+    cqo
+    idiv rcx
+    push rax
+    jmp next
+
+  ; ( b a -- [a < b] )
+  native '<', less
+    pop rdx
+    pop rax
+    cmp rax, rdx
+    setl al
+    movzx rax, al
+    push rax
+    jmp next
+
+  ; ( a b -- b a )
+  ; Swap two cells on top of the stack
+  native 'swap', swap
+      pop rax
+      pop rdx
+      push rax
+      push rdx
+      jmp next
+
+; Shows all stack contents. Does not pop elements
+native '.S', show_stack
+  mov rcx, rsp
+  .loop:
+    cmp rcx, [stack_start]
+    jae next
+    mov rdi, [rcx]
+    push rcx
+    call print_int
+    call print_newline
+    pop rcx
+    add rcx, 8
+    jmp .loop
+
+; ( b a -- [ b = a ] )
+native '=', equals
+  pop rdx
+  pop rax
+  cmp rax, rdx
+  jne .nequals
+  xor rax, rax
+  mov rax, 1
+  push rax
+  jmp next
+.nequals:
+  xor rax, rax
+  jmp next
+
+; ( b a -- b & a )
+; bitwise and
+native 'and', and
+  pop rdx
+  pop rax
+  and rax, rdx
+  push rax
+  jmp next
+
+; ( a -- !a )
+native 'not', not
+  pop rax
+  test rax, rax
+  jz .setone
+  xor rax, rax
+  push rax
+  jmp next
+  .setone:
+    xor rax, rax
+    mov rax, 1
+    push rax
+    jmp next
+
+; ( a b c -- b c a )
+native 'rot', rot
+  pop rax
+  pop rdx
+  pop rcx
+  push rdx
+  push rcx
+  push rax
+  jmp next
+
+; ( -- c )
+; Read a single character
+native 'key', key
+  call read_char
+  push rax
+  jmp next
+
+; ( c -- )
+; Outputs a single character to stdout
+native 'emit', emit
+  pop rdi
+  call print_char
+  jmp next
+
+; ( val addr -- )
+; Store value by address
+native '!', write
+  pop rax
+  pop rdx
+  mov [rax], rdx
+  jmp next
+
+; ( addr -- value )
+; Fetch value from memory
+native '@', fetch
+  pop rax
+  push qword[rax]
+  jmp next
+
+; bitwise or
+; ( y x -- y | x )
+native 'or', or
+  pop rax
+  or [rsp], rax
+  jmp next
+
+; ( x -- )
+; Add x to the word being defined
+native ',', comma
+  mov rax, [here]
+  pop qword [rax]
+  add qword [here], 8
   jmp next
 
 ; (  -- num len )
@@ -183,175 +345,6 @@ native 'pushmode', pushmode
   xor eax, eax
   mov rax, [mode]
   push rax
-  jmp next
-
-; ( a -- a a )
-native 'dup', dup
-  push qword [rsp]
-  jmp next
-
-; ( b a -- [a < b] )
-native '<', less
-  pop rdx
-  pop rax
-  cmp rax, rdx
-  setl al
-  movzx rax, al
-  push rax
-  jmp next
-
-; ( a b -- b a )
-; Swap two cells on top of the stack
-native 'swap', swap
-    pop rax
-    pop rdx
-    push rax
-    push rdx
-    jmp next
-
-; Shows all stack contents. Does not pop elements
-native '.S', show_stack
-  mov rcx, rsp
-  .loop:
-    cmp rcx, [stack_start]
-    jae next
-    mov rdi, [rcx]
-    push rcx
-    call print_int
-    call print_newline
-    pop rcx
-    add rcx, 8
-    jmp .loop
-
-; ( b a -- [ b + a ] )
-native '+', plus
-  pop rdx
-  pop rax
-  add rax, rdx
-  push rax
-  jmp next
-
-; ( b a -- [ b - a ] )
-native '-', minus
-  pop rdx
-  pop rax
-  sub rax, rdx
-  push rax
-  jmp next
-
-; ( b a -- [ b * a ] )
-native '*', mul
-  pop rdx
-  pop rax
-  imul rdx
-  push rax
-  jmp next
-
-; ( y x -- [ x / y ] )
-native '/', div
-  pop rax
-  pop rcx
-  cqo
-  idiv rcx
-  push rax
-  jmp next
-
-; ( b a -- [ b = a ] )
-native '=', equals
-  pop rdx
-  pop rax
-  cmp rax, rdx
-  jne .nequals
-  xor rax, rax
-  mov rax, 1
-  push rax
-  jmp next
-.nequals:
-  xor rax, rax
-  jmp next
-
-; ( b a -- b & a )
-; bitwise and
-native 'and', and
-  pop rdx
-  pop rax
-  and rax, rdx
-  push rax
-  jmp next
-
-; ( a -- !a )
-native 'not', not
-  pop rax
-  test rax, rax
-  jz .setone
-  xor rax, rax
-  push rax
-  jmp next
-  .setone:
-    xor rax, rax
-    mov rax, 1
-    push rax
-    jmp next
-
-; ( a b c -- b c a )
-native 'rot', rot
-  pop rax
-  pop rdx
-  pop rcx
-  push rdx
-  push rcx
-  push rax
-  jmp next
-
-; Drops element from stack and sends it to stdout
-; ( a -- )
-native '.', dot
-  pop rdi
-  call print_int
-  jmp next
-
-; ( -- c )
-; Read a single character
-native 'key', key
-  call read_char
-  push rax
-  jmp next
-
-; ( c -- )
-; Outputs a single character to stdout
-native 'emit', emit
-  pop rdi
-  call print_char
-  jmp next
-
-; ( val addr -- )
-; Store value by address
-native '!', write
-  pop rax
-  pop rdx
-  mov [rax], rdx
-  jmp next
-
-; ( addr -- value )
-; Fetch value from memory
-native '@', fetch
-  pop rax
-  push qword[rax]
-  jmp next
-
-; bitwise or
-; ( y x -- y | x )
-native 'or', or
-  pop rax
-  or [rsp], rax
-  jmp next
-
-; ( x -- )
-; Add x to the word being defined
-native ',', comma
-  mov rax, [here]
-  pop qword [rax]
-  add qword [here], 8
   jmp next
 
 ; ( flags name --  )

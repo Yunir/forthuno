@@ -22,7 +22,10 @@ test1: forthuno
 
 test2: forthuno
 	./forthuno <tests/test02.frt
-	
+
+test3: forthuno
+	./forthuno <tests/test03.frt
+
 # build and debug
 bd: clean debug
 
