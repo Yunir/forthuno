@@ -26,6 +26,18 @@ test2: forthuno
 test3: forthuno
 	./forthuno <tests/test03.frt
 
+test4: forthuno
+	./forthuno <tests/test04.frt
+
+test5: forthuno
+	./forthuno <tests/test05.frt
+
+test6: forthuno
+	./forthuno <tests/test06.frt
+
+test7: forthuno
+	./forthuno <tests/test07.frt
+
 # build and debug
 bd: clean debug
 

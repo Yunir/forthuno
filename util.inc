@@ -8,15 +8,10 @@ section .data
   mode: dq 0               ; 0 - interpreter ; 1 - compiler
   was_branch: db 0
   mem: dq forth_mem
+  stack_start: dq 0
 
 
 section .bss
-
-  ; data stack - END   ;
-  resq 1023
-  stack_start: resq 1
-  ; data stack - START ;
-
   ; return stack - END   ;
   resq 1023
   rstack_start: resq 1

@@ -51,59 +51,59 @@ native 'dup', dup
   push qword [rsp]
   jmp next
 
-  ; ( b a -- [ b + a ] )
-  native '+', plus
-    pop rdx
-    pop rax
-    add rax, rdx
-    push rax
-    jmp next
+; ( b a -- [ b + a ] )
+native '+', plus
+  pop rdx
+  pop rax
+  add rax, rdx
+  push rax
+  jmp next
 
-  ; ( b a -- [ b - a ] )
-  native '-', minus
-    pop rdx
-    pop rax
-    sub rax, rdx
-    push rax
-    jmp next
+; ( b a -- [ b - a ] )
+native '-', minus
+  pop rdx
+  pop rax
+  sub rax, rdx
+  push rax
+  jmp next
 
-  ; ( b a -- [ b * a ] )
-  native '*', mul
-    pop rdx
-    pop rax
-    imul rdx
-    push rax
-    jmp next
+; ( b a -- [ b * a ] )
+native '*', mul
+  pop rdx
+  pop rax
+  imul rdx
+  push rax
+  jmp next
 
-  ; ( b a -- [ b / a ] )
-  native '/', div
-    pop rcx
-    pop rax
-    cqo
-    idiv rcx
-    push rax
-    jmp next
+; ( b a -- [ b / a ] )
+native '/', div
+  pop rcx
+  pop rax
+  cqo
+  idiv rcx
+  push rax
+  jmp next
 
-  ; ( b a -- [a < b] )
-  native '<', less
-    pop rdx
-    pop rax
-    cmp rax, rdx
-    setl al
-    movzx rax, al
-    push rax
-    jmp next
+; ( b a -- [a < b] )
+native '<', less
+  pop rdx
+  pop rax
+  cmp rax, rdx
+  setl al
+  movzx rax, al
+  push rax
+  jmp next
 
-  ; ( a b -- b a )
-  ; Swap two cells on top of the stack
-  native 'swap', swap
-      pop rax
-      pop rdx
-      push rax
-      push rdx
-      jmp next
+; ( a b -- b a )
+; swap two cells on top of the stack
+native 'swap', swap
+  pop rdx
+  pop rax
+  push rdx
+  push rax
+  jmp next
 
-; Shows all stack contents. Does not pop elements
+; print all stack elements
 native '.S', show_stack
   mov rcx, rsp
   .loop:
@@ -127,17 +127,25 @@ native '=', equals
   mov rax, 1
   push rax
   jmp next
-.nequals:
-  xor rax, rax
-  jmp next
+  .nequals:
+    xor rax, rax
+    push rax
+    jmp next
 
-; ( b a -- b & a )
+; ( b a -- [ b & a ] )
 ; bitwise and
-native 'and', and
+native '&', and
   pop rdx
   pop rax
   and rax, rdx
   push rax
+  jmp next
+
+; ( b a -- [ b | a ] )
+; bitwise or
+native '|', or
+  pop rax
+  or [rsp], rax
   jmp next
 
 ; ( a -- !a )
@@ -154,32 +162,32 @@ native 'not', not
     push rax
     jmp next
 
-; ( a b c -- b c a )
+; ( c b a -- b a c )
 native 'rot', rot
   pop rax
   pop rdx
   pop rcx
   push rdx
-  push rcx
   push rax
+  push rcx
   jmp next
 
 ; ( -- c )
-; Read a single character
+; read a single character from stdin
 native 'key', key
   call read_char
   push rax
   jmp next
 
 ; ( c -- )
-; Outputs a single character to stdout
+; output a single character to stdout
 native 'emit', emit
   pop rdi
   call print_char
   jmp next
 
 ; ( val addr -- )
-; Store value by address
+; store value by address
 native '!', write
   pop rax
   pop rdx
@@ -187,36 +195,14 @@ native '!', write
   jmp next
 
 ; ( addr -- value )
-; Fetch value from memory
+; fetch value from address
 native '@', fetch
   pop rax
   push qword[rax]
   jmp next
 
-; bitwise or
-; ( y x -- y | x )
-native 'or', or
-  pop rax
-  or [rsp], rax
-  jmp next
-
-; ( x -- )
-; Add x to the word being defined
-native ',', comma
-  mov rax, [here]
-  pop qword [rax]
-  add qword [here], 8
-  jmp next
-
-; (  -- num len )
-native 'parsei', parsei
-  call parse_int          ; rax - number ; rdx - length of number
-  push rax                ; save number to stack
-  push rdx
-  jmp next
-
 ; ( user_word_addr -- dict_word_addr )
-; Find word in dictionary
+; find word in dictionary
 native 'find', find
   pop rdi                ; rdi - user's word
   call find_word
@@ -229,6 +215,24 @@ native 'cfa', cfa
   pop rdi
 	call call_from_address
   push rax
+  jmp next
+
+; ( xt_addr --  )
+native 'initcmd', initcmd
+  pop rax
+  push pc
+  mov [program_stub], rax
+  mov pc, program_stub
+  mov w, [pc]
+  pop pc
+  jmp [w]
+
+; ( x -- )
+; Add x to the word being defined
+native ',', comma
+  mov rax, [here]
+  pop qword [rax]
+  add qword [here], 8
   jmp next
 
 ; ( xt_addr -- xt_addr answer )
@@ -324,16 +328,6 @@ native 'bye', bye
   xor rdi, rdi
   syscall
 
-; ( xt_addr --  )
-native 'initcmd', initcmd
-  pop rax
-  push pc
-  mov [program_stub], rax
-  mov pc, program_stub
-  mov w, [pc]
-  pop pc
-  jmp [w]
-
 native 'warn', warn
   mov  rdi, warning_message
   call print_string
@@ -386,6 +380,12 @@ native 'init', init
   mov stack, stack_start
   mov qword[mode], 0
   mov pc, xt_run
+  cmp qword [stack_start], 0
+  je  .first
+  mov rsp, [stack_start]
+  jmp next
+  .first:
+  mov [stack_start], rsp
   jmp next
 
 ; (  -- buf_addr )
