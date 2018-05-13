@@ -1,7 +1,7 @@
 ; (  -- buf_addr )
 ; load the predefined buffer address
-native 'buffer', buffer
-  push qword input_buf
+native 'buf', buf
+  push qword user_buf
   jmp next
 
 ; ( buf_addr -- len )
@@ -30,7 +30,7 @@ native 'printnl', printnl
   call print_newline
   jmp next
 
-; ( num --  )
+; ( a --  )
 ; print integer number
 native 'printi', printi
   pop rdi
@@ -174,20 +174,6 @@ native 'initcmd', initcmd
 
 native 'warn', warn
   mov  rdi, warning_message
-  call print_string
-  call print_newline
-  mov  pc, xt_loop
-  jmp next
-
-native 'comp_m', comp_m
-  mov  rdi, cmode_message
-  call print_string
-  call print_newline
-  mov  pc, xt_loop
-  jmp next
-
-native 'inte_m', inte_m
-  mov  rdi, imode_message
   call print_string
   call print_newline
   mov  pc, xt_loop
@@ -409,6 +395,23 @@ native 'init', init
   mov pc, xt_run
   jmp next
 
+; (  -- buf_addr )
+; load the predefined buffer address
+native 'buffer', buffer
+  push qword input_buf
+  jmp next
+
+native 'comp_m', comp_m
+  mov  rdi, cmode_message
+  call print_string
+  call print_newline
+  jmp next
+
+native 'inte_m', inte_m
+  mov  rdi, imode_message
+  call print_string
+  call print_newline
+  jmp next
 
 ; ( a -- [ a + a ] )
 colon 'double', double

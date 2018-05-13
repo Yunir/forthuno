@@ -17,16 +17,16 @@ run:
 
   main_loop:
     dq xt_buffer
-    dq xt_read                ; read the word
+    dq xt_read               ; read the word
     branchif0 exit           ; word read error or empty string
     dq xt_buffer
-    dq xt_find
+    dq xt_find               ; addr or 0
 
     dq xt_pushmode
     branchif0 .interpreter_mode
 
   .compiler_mode:
-    dq xt_comp_m
+    ;dq xt_comp_m
     dq xt_dup                 ; copy address
     branchif0 .compiler_number
 
@@ -65,7 +65,7 @@ run:
 
 
   .interpreter_mode:
-    dq xt_inte_m
+    ;dq xt_inte_m
     dq xt_dup
     branchif0 .interpreter_number
 

@@ -16,13 +16,13 @@
 ##### Native words
 | word | stack | definition |
 |-|-|-|
-| buffer | (  -- buf_addr ) | load the predefined buffer address |
+| buf | (  -- buf_addr ) | load the predefined buffer address |
 | read | ( addr -- len ) | read word to addr |
 | drop | ( a --  ) | drop the topmost element from the stack |
 | prints | ( addr --  ) | print string |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| printnl | (  --  ) | print new line |
+| printi | ( a --  ) | print integer number |
+| compare | ( addr2 addr1 -- ans ) | check strings to equality |
 |  |  |  |
 |  |  |  |
 |  |  |  |

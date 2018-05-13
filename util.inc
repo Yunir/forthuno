@@ -23,6 +23,7 @@ section .bss
   ; return stack - START ;
   forth_mem: resq 65536
   input_buf: resb 1024
+  user_buf: resb 1024
 
 section .text
 ; Searches word in dictionary
@@ -59,6 +60,7 @@ call_from_address:
   call string_length        ; rax - length of string
   pop rdi
   add rax, 1                ; rax - length with null-terminator
+  add rax, 1                ; rax - with immediate flag
   add rdi, rax
   mov rax, rdi
   ret

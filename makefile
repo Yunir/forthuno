@@ -17,6 +17,12 @@ debug: forthuno
 run: forthuno
 	./forthuno
 
+test1: forthuno
+	./forthuno <tests/test01.frt
+
+test2: forthuno
+	./forthuno <tests/test02.frt
+	
 # build and debug
 bd: clean debug
 
