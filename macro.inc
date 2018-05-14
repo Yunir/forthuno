@@ -31,9 +31,8 @@
 	  create_link
 	  db %1, 0
     db %3                ; Immediate flag
-  section .text
 	 xt_ %+ %2:
-	  dq xt_docol             ; The `docol` address −− one level of indirection
+	  dq docol_impl             ; The `docol` address −− one level of indirection
 %endmacro
 
 %macro native 2

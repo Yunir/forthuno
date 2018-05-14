@@ -75,6 +75,7 @@ run:
 
     .interpreter_number:
       dq xt_drop
+      dq xt_buffer
       dq xt_parsei
       branchif0 .warning
       branch main_loop

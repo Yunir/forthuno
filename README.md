@@ -1,6 +1,13 @@
 ## Forthuno
 ### The forth dialect with Indirect Threaded Code (ITC) to dive into practice
 
+#### How to use
+First of all, you may want to understand how this dialect works. In this situation use make instructions to comprehend the idea of each forth word:
+> $ make test1 <br>
+> $ make test2 <br>
+> ... <br>
+> $ make test7
+
 #### 2 modes
 1. Interpretation mode
 1. Compilation mode
@@ -16,7 +23,7 @@
 ##### Native words
 | word | stack | definition |
 |-|-|-|
-| buf | (  -- buf_addr ) | load the predefined buffer address |
+| buf | (  -- buf_addr ) | load the predefined forth buffer address |
 | read | ( addr -- len ) | read word to addr |
 | drop | ( a --  ) | drop last element from the stack |
 | prints | ( addr --  ) | print string |
@@ -43,9 +50,26 @@
 | find | ( addr -- addr' ) | find word in dictionary |
 | cfa | ( addr -- xt_addr ) | jump pointer to execution_point place |
 | initcmd | ( xt_addr --  ) | initialize command by address |
+| bye | **does not affect** | terminate the program |
+| warn | **does not affect** | print warning message |
+| isimmediate | ( xt_addr -- xt_addr ans ) | put to the stack immediate-flag of the word |
+| parsei | ( addr -- num len ) | get the integer number from the address |
+| pushmode | (  -- ans ) | push mode-flag: 0 - inter. 1 - compil. |
 |  |  |  |
-| To | Be | Continued... |
+|  |  |  |
 
 ###### Additional words not for general using
+| word | stack | definition |
+|-|-|-|
+| buffer | (  -- addr ) | load the predefined assembly buffer address |
+|  |  |  |
+|  |  |  |
+
+For debugging: comp_m, inte_m
 
 ##### Colon words
+| word | stack | definition |
+|-|-|-|
+| double | ( a -- [a+a] ) | multiply by 2 the number in the stack |
+| > | ( b a -- [b>a] ) | compare two numbers in the stack |
+|  |  |  |

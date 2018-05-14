@@ -17,25 +17,25 @@ debug: forthuno
 run: forthuno
 	./forthuno
 
-test1: forthuno
+test1: clean forthuno
 	./forthuno <tests/test01.frt
 
-test2: forthuno
+test2: clean forthuno
 	./forthuno <tests/test02.frt
 
-test3: forthuno
+test3: clean forthuno
 	./forthuno <tests/test03.frt
 
-test4: forthuno
+test4: clean forthuno
 	./forthuno <tests/test04.frt
 
-test5: forthuno
+test5: clean forthuno
 	./forthuno <tests/test05.frt
 
-test6: forthuno
+test6: clean forthuno
 	./forthuno <tests/test06.frt
 
-test7: forthuno
+test7: clean forthuno
 	./forthuno <tests/test07.frt
 
 # build and debug

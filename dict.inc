@@ -220,19 +220,19 @@ native 'cfa', cfa
 ; ( xt_addr --  )
 native 'initcmd', initcmd
   pop rax
-  push pc
-  mov [program_stub], rax
-  mov pc, program_stub
-  mov w, [pc]
-  pop pc
+  mov w, rax
   jmp [w]
 
-; ( x -- )
-; Add x to the word being defined
-native ',', comma
-  mov rax, [here]
-  pop qword [rax]
-  add qword [here], 8
+; terminate the program
+native 'bye', bye
+  mov rax, 60
+  xor rdi, rdi
+  syscall
+
+native 'warn', warn
+  mov  rdi, warning_message
+  call print_string
+  call print_newline
   jmp next
 
 ; ( xt_addr -- xt_addr answer )
@@ -242,6 +242,28 @@ native 'isimmediate', isimmediate
   xor rdx, rdx
   mov dl, byte[rax - 1]
   push rdx
+  jmp next
+
+; ( addr -- num len )
+native 'parsei', parsei
+  pop rdi
+  call parse_int          ; rax - number ; rdx - length of number
+  push rax                ; save number to stack
+  push rdx
+  jmp next
+
+native 'pushmode', pushmode
+  xor eax, eax
+  mov rax, [mode]
+  push rax
+  jmp next
+
+; ( x -- )
+; add x to the word being defined
+native ',', comma
+  mov rax, [here]
+  pop qword [rax]
+  add qword [here], 8
   jmp next
 
 ; ( xt_addr -- xt_addr )
@@ -311,7 +333,7 @@ native 'branch', branch
 ; Saves PC when the colon word starts
 native 'docol', docol
   sub rstack, 8
-  mov [rstack], pc
+  mov qword [rstack], pc
   add w, 8
   mov pc, w
   jmp next
@@ -320,25 +342,6 @@ native 'docol', docol
 native 'exit', exit
   mov pc, [rstack]
   add rstack, 8
-  jmp next
-
-; Exits program
-native 'bye', bye
-  mov rax, 60
-  xor rdi, rdi
-  syscall
-
-native 'warn', warn
-  mov  rdi, warning_message
-  call print_string
-  call print_newline
-  mov  pc, xt_loop
-  jmp next
-
-native 'pushmode', pushmode
-  xor eax, eax
-  mov rax, [mode]
-  push rax
   jmp next
 
 ; ( flags name --  )
@@ -408,14 +411,15 @@ native 'inte_m', inte_m
 
 ; ( a -- [ a + a ] )
 colon 'double', double
-  dq xt_dup                 ; The words consisting `dup` start here.
+  dq xt_dup
   dq xt_plus
   dq xt_exit
 
+; ( b a -- [b>a] )
 colon '>', greater
   dq xt_swap
   dq xt_less
-  dq exit
+  dq xt_exit
 
 ; Read word from stdin and start defining it
 colon ':', colon
