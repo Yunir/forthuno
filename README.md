@@ -6,7 +6,7 @@ First of all, you may want to understand how this dialect works. In this situati
 > $ make test1 <br>
 > $ make test2 <br>
 > ... <br>
-> $ make test7
+> $ make test8
 
 #### 2 modes
 1. Interpretation mode
@@ -62,7 +62,11 @@ First of all, you may want to understand how this dialect works. In this situati
 | word | stack | definition |
 |-|-|-|
 | buffer | (  -- addr ) | load the predefined assembly buffer address |
-|  |  |  |
+| init | **does not affect** | perform general operations to start the interpreter |
+| docol | **does not affect** | save PC when the colon word starts |
+| exit | **does not affect** | return from the colon word |
+| branchifz | ( ans --  ) | jump to a location if answer is 0 |
+| branch | **does not affect** | jump to a location |
 |  |  |  |
 
 For debugging: comp_m, inte_m

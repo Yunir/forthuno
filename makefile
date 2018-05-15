@@ -38,6 +38,9 @@ test6: clean forthuno
 test7: clean forthuno
 	./forthuno <tests/test07.frt
 
+test8: clean forthuno
+	./forthuno <tests/test08.frt
+
 # build and debug
 bd: clean debug
 
