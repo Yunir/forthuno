@@ -54,20 +54,27 @@ First of all, you may want to understand how this dialect works. In this situati
 | warn | **does not affect** | print warning message |
 | isimmediate | ( xt_addr -- xt_addr ans ) | put to the stack immediate-flag of the word |
 | parsei | ( addr -- num len ) | get the integer number from the address |
-| pushmode | (  -- ans ) | push mode-flag: 0 - inter. 1 - compil. |
-|  |  |  |
-|  |  |  |
+| pushmode | (  -- mode ) | push mode-flag: 0 - inter. 1 - compil. |
+| pushmode_addr | (  -- addr ) | push mode-flag address |
 
 ###### Additional words not for general using
 | word | stack | definition |
 |-|-|-|
-| buffer | (  -- addr ) | load the predefined assembly buffer address |
 | init | **does not affect** | perform general operations to start the interpreter |
+| buffer | (  -- addr ) | load the predefined assembly buffer address |
 | docol | **does not affect** | save PC when the colon word starts |
 | exit | **does not affect** | return from the colon word |
 | branchifz | ( ans --  ) | jump to a location if answer is 0 |
 | branch | **does not affect** | jump to a location |
-|  |  |  |
+| create | ( flag name --  ) | create an entry in the dictionary |
+| , | ( a -- ) | add element from stack to the defining word |
+| isbranch | **does not affect** | check is word branch by xt_address in the stack |
+| unsetbranch | **does not affect** | set the flag was_branch to 0 |
+| wasbranch | (  -- answer ) | put was_branch flag state to the stack  |
+| pushlit | (  -- xt_addr ) | push xt_addr of lit to the stack |
+| lit | **does not affect** | push a value immediately following this XT |
+| saveword | ( xt_addr --  ) | add xt_addr of word to defining word |
+| savenum | ( xt_addr --  ) | add xt_addr of num to defining word |
 
 For debugging: comp_m, inte_m
 
@@ -76,4 +83,6 @@ For debugging: comp_m, inte_m
 |-|-|-|
 | double | ( a -- [a+a] ) | multiply by 2 the number in the stack |
 | > | ( b a -- [b>a] ) | compare two numbers in the stack |
-|  |  |  |
+| : | **does not affect** | read word from stdin and start defining it |
+| ; | **does not affect** | finish defining word from stdin |
+| ' | ( -- xt_addr ) | read word and place its xt_address on the stack |
