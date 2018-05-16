@@ -6,7 +6,9 @@ First of all, you may want to understand how this dialect works. In this situati
 > $ make test1 <br>
 > $ make test2 <br>
 > ... <br>
-> $ make test8
+> $ make test7 <br>
+> $ make test8 <br>
+> $ make stdlib
 
 #### 2 modes
 1. Interpretation mode
@@ -39,14 +41,21 @@ First of all, you may want to understand how this dialect works. In this situati
 | swap | ( b a -- a b ) | swap two cells on top of the stack |
 | .S | **does not affect** | print all stack elements |
 | = | ( b a -- [b=a] ) | compare two numbers in the stack |
-| & | ( b a -- [b&a] ) | bitwise and |
-| &#124; (pipe) | ( b a -- [b&#124;a] ) | bitwise or |
+| and | ( b a -- [b&a] ) | bitwise and |
+| or | ( b a -- [b&#124;a] ) | bitwise or |
 | not | ( a -- !a ) | transform any number to 0 or if it 0 to 1 |
 | rot | ( c b a -- b a c ) | move third value to the top of stack with shift |
 | key | (  -- c ) | read a single character from stdin |
 | emit | ( c --  ) | output a single character to stdout |
 | ! | ( a addr --  ) | store value by address |
 | @ | ( addr -- a ) | fetch value from address |
+| c! |  |  |
+| c@ |  |  |
+| >r |  |  |
+| r> |  |  |
+| r@ |  |  |
+| lor |  |  |
+| land |  |  |
 | find | ( addr -- addr' ) | find word in dictionary |
 | cfa | ( addr -- xt_addr ) | jump pointer to execution_point place |
 | initcmd | ( xt_addr --  ) | initialize command by address |
@@ -72,9 +81,11 @@ First of all, you may want to understand how this dialect works. In this situati
 | unsetbranch | **does not affect** | set the flag was_branch to 0 |
 | wasbranch | (  -- answer ) | put was_branch flag state to the stack  |
 | pushlit | (  -- xt_addr ) | push xt_addr of lit to the stack |
+| push_lastword |  |  |
 | lit | **does not affect** | push a value immediately following this XT |
 | saveword | ( xt_addr --  ) | add xt_addr of word to defining word |
 | savenum | ( xt_addr --  ) | add xt_addr of num to defining word |
+| syscall |  |  |
 
 For debugging: comp_m, inte_m
 
