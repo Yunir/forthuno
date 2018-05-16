@@ -49,13 +49,10 @@ First of all, you may want to understand how this dialect works. In this situati
 | emit | ( c --  ) | output a single character to stdout |
 | ! | ( a addr --  ) | store value by address |
 | @ | ( addr -- a ) | fetch value from address |
-| c! |  |  |
-| c@ |  |  |
-| >r |  |  |
-| r> |  |  |
-| r@ |  |  |
-| lor |  |  |
-| land |  |  |
+| c! | ( val addr -- ) | store value by address |
+| c@ | ( addr -- char ) | read one byte starting at addr |
+| lor | ( b a -- [b lor a]) | logic or |
+| land | ( b a -- [b land a]) | logic and |
 | find | ( addr -- addr' ) | find word in dictionary |
 | cfa | ( addr -- xt_addr ) | jump pointer to execution_point place |
 | initcmd | ( xt_addr --  ) | initialize command by address |
@@ -81,11 +78,10 @@ First of all, you may want to understand how this dialect works. In this situati
 | unsetbranch | **does not affect** | set the flag was_branch to 0 |
 | wasbranch | (  -- answer ) | put was_branch flag state to the stack  |
 | pushlit | (  -- xt_addr ) | push xt_addr of lit to the stack |
-| push_lastword |  |  |
 | lit | **does not affect** | push a value immediately following this XT |
 | saveword | ( xt_addr --  ) | add xt_addr of word to defining word |
 | savenum | ( xt_addr --  ) | add xt_addr of num to defining word |
-| syscall |  |  |
+| syscall | ( call_num a1 a2 a3 a4 a5 a6 -- new_rax new_rdx ) | execute syscall |
 
 For debugging: comp_m, inte_m
 
