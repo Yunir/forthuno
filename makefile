@@ -44,6 +44,9 @@ test8: clean forthuno
 stdlib: clean forthuno
 	./forthuno <libs/stdlib.frt
 
+mp: clean forthuno
+	./forthuno <mp.frt
+
 # build and debug
 bd: clean debug
 
