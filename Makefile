@@ -1,10 +1,21 @@
+SOURCE_DIR := ./src
+BUILD_DIR  := ./build
+
+SOURCE_FILES := $(wildcard $(SOURCE_DIR)/*.asm)
+BUILD_FILES  := $(patsubst $(SOURCE_DIR)/%.asm, $(BUILD_DIR)/%.o, $(SOURCE_FILES))
+
+# $^ – the names of all the prerequisites, with spaces between them
+# $@ – the filename of the target of the rule
+# $< – the name of the first prerequisite
+
 all: forthuno
 
-forthuno: forthuno.o
-	ld -o forthuno forthuno.o
+forthuno: $(BUILD_FILES)
+	ld -o forthuno $^
 
-forthuno.o: forthuno.asm
-	nasm -f elf64 -g -F dwarf forthuno.asm -o forthuno.o
+$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.asm
+	mkdir -p $(dir $@)
+	nasm -f elf64 -g -F dwarf -o $@ $<
 
 rebuild: clean forthuno
 
@@ -53,4 +64,4 @@ bd: clean debug
 br: clean run
 
 clean:
-	rm -f forthuno *.o
+	rm -f forthuno $(BUILD_DIR)

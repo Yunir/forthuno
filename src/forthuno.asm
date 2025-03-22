@@ -1,7 +1,7 @@
-%include 'io_lib.inc'
-%include 'macro.inc'
-%include 'util.inc'
-%include 'dict.inc'
+%include 'src/io_lib.inc'
+%include 'src/macro.inc'
+%include 'src/util.inc'
+%include 'src/dict.inc'
 
 global _start
 
